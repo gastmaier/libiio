@@ -11,7 +11,17 @@ bison_target(parser
 add_flex_bison_dependency(lexer parser)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
+set(CMAKE_LIBRARY_PATH
+	${CMAKE_LIBRARY_PATH}
+	"/lib/arm-linux-gnueabihf"
+	"/usr/lib/arm-linux-gnueabihf"
+	"/lib/x86_64-linux-gnu"
+	"/usr/lib/x86_64-linux-gnu"
+)
+set(CMAKE_INCLUDE_PATH
+	${CMAKE_INCLUDE_PATH}
+	"/usr/include"
+)
 include(CheckSymbolExists)
 set(CMAKE_REQUIRED_LIBRARIES ${PTHREAD_LIBRARIES})
 set(CMAKE_REQUIRED_DEFINITIONS -D_GNU_SOURCE)
@@ -32,8 +42,8 @@ set(IIOD_CFILES iiod.c ops.c thread-pool.c ${BISON_parser_OUTPUTS} ${FLEX_lexer_
 
 option(WITH_AIO "Build IIOD with async. I/O support" ON)
 if (WITH_AIO)
-	find_library(LIBAIO_LIBRARIES aio)
 	find_path(LIBAIO_INCLUDE_DIR libaio.h)
+	find_library(LIBAIO_LIBRARIES aio)
 
 	if (NOT LIBAIO_LIBRARIES OR NOT LIBAIO_INCLUDE_DIR)
 		message(SEND_ERROR "Unable to find libaio dependency.\n"
